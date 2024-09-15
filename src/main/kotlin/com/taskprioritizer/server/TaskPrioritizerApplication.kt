@@ -1,4 +1,4 @@
-package com.taskprioritizer.taskprioritizer
+package com.taskprioritizer.server
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
