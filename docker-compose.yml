@@ -1,0 +1,34 @@
+services:
+  postgresql:
+    image: postgres:14.9
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: task-prioritizer
+    healthcheck:
+      test: [ "CMD", "psql", "postgresql://user:password@localhost:5432/task-prioritizer", "-c", "select 1;" ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  task-prioritizer:
+    build:
+      context: .
+      # image: task-prioritizer
+      dockerfile: Dockerfile
+    ports:
+      - "8443:8433"
+      - "8080:8080"
+    depends_on:
+      - postgresql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/task-prioritizer
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8443/actuator/health" ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
